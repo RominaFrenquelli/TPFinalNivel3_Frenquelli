@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gestor-Comercio", "Gestor-Comercio\Gestor-Comercio.csproj", "{392F176A-83FF-4A01-B08D-69C48EAF6AFD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{392F176A-83FF-4A01-B08D-69C48EAF6AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{392F176A-83FF-4A01-B08D-69C48EAF6AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{392F176A-83FF-4A01-B08D-69C48EAF6AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{392F176A-83FF-4A01-B08D-69C48EAF6AFD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D21A55A9-797B-4FA1-A5FB-B78E5933E36B}
+	EndGlobalSection
+EndGlobal

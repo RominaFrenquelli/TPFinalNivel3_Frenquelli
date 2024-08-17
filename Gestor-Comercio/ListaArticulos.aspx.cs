@@ -11,9 +11,11 @@ namespace Gestor_Comercio
 {
     public partial class ListaArticulos : System.Web.UI.Page
     {
+        public bool FiltroAvanzado { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
             ArticuloBusiness negocio = new ArticuloBusiness();
+
             dgvArticulos.DataSource = negocio.Listar();
             dgvArticulos.DataBind();
         }
@@ -22,6 +24,17 @@ namespace Gestor_Comercio
         {
             string id = dgvArticulos.SelectedDataKey.Value.ToString();
             Response.Redirect("FormularioArticulo.aspx?Id=" + id);
+        }
+
+        protected void chkFiltroAvanzado_CheckedChanged(object sender, EventArgs e)
+        {
+            FiltroAvanzado = chkFiltroAvanzado.Checked;
+            txtBuscar.Enabled = !FiltroAvanzado;
+        }
+
+        protected void ddlCampo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

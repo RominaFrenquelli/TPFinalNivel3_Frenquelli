@@ -3,8 +3,8 @@
 }
 
 .container-fluid{
-    padding-right: 8%;
-    padding-left: 8%;
+    padding-right: 12%;
+    padding-left: 12%;
     box-sizing:border-box;
 }
 
@@ -18,3 +18,15 @@
     border-top-right-radius: 15px;*/
     background-size: cover;
 }
+
+div.card.h-100 {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    div.card.h-100:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+
+

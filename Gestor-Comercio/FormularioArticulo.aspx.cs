@@ -66,5 +66,34 @@ namespace Gestor_Comercio
 
             }
         }
+
+        protected void btnAceptar_Click(object sender, EventArgs e)
+        {
+            Articulo nuevo = new Articulo();
+            ArticuloBusiness negocio = new ArticuloBusiness();
+
+            try
+            {
+                nuevo.Codigo = txtCodigo.Text;
+                nuevo.Nombre = txtNombre.Text;
+                nuevo.Descripcion = txtDescripcion.Text;
+                nuevo.Precio = int.Parse(txtPrecio.Text);
+                nuevo.ImagenUrl = txtImagenUrl.Text;
+
+                nuevo.Categoria = new Categoria();
+                nuevo.Categoria.Id = int.Parse(ddlCategoria.SelectedValue);
+                nuevo.Marca = new Marca();
+                nuevo.Marca.Id = int.Parse(ddlmarca.SelectedValue);
+
+                negocio.Agregar(nuevo);
+
+                Response.Redirect("ListaArticulos.aspx", false);
+            }
+            catch (Exception ex)
+            {
+
+                Session.Add("error", ex);
+            }
+        }
     }
 }

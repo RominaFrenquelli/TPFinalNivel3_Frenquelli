@@ -1,6 +1,9 @@
 ﻿body {
-    background: linear-gradient(270deg, #213031 0, #aebdbe 100%);
+    /*background: #424242 url();*/
+    background: linear-gradient(270deg, #213031 0, #aebdbe 100%), url();
 }
+
+
 
 .container-fluid{
     padding-right: 12%;

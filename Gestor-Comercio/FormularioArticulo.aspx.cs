@@ -11,8 +11,12 @@ namespace Gestor_Comercio
 {
     public partial class FormularioArticulo : System.Web.UI.Page
     {
+        public bool ConfirmaEliminacion { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
+            txtId.Enabled = false;
+            ConfirmaEliminacion = false;
+
             MarcaBusiness marcaNegocio = new MarcaBusiness();
             CategoriaBusiness categoriaNegocio = new CategoriaBusiness();
             try
@@ -27,6 +31,24 @@ namespace Gestor_Comercio
                     ddlCategoria.DataValueField = "Id";
                     ddlCategoria.DataTextField = "Descripcion";
                     ddlCategoria.DataBind();
+
+                }
+
+                string id = Request.QueryString["Id"] != null ? Request.QueryString["Id"].ToString() : "";
+                if(id != "" && !IsPostBack)
+                {
+                    ArticuloBusiness negocio = new ArticuloBusiness();  
+                    Articulo seleccionado = (negocio.Listar(id))[0];
+
+                    txtId.Text = id;
+                    txtCodigo.Text = seleccionado.Codigo;
+                    txtNombre.Text = seleccionado.Nombre;
+                    txtDescripcion.Text = seleccionado.Descripcion;
+                    txtImagenUrl.Text = seleccionado.ImagenUrl;
+                    txtPrecio.Text = seleccionado.Precio.ToString();
+                    ddlCategoria.SelectedValue = seleccionado.Categoria.Id.ToString();
+                    ddlmarca.SelectedValue = seleccionado.Marca.Id.ToString();
+                    CargarImagen(seleccionado.ImagenUrl);
 
                 }
 
@@ -62,7 +84,7 @@ namespace Gestor_Comercio
             }
             catch (Exception ex)
             {
-                imagen = imgArticulo.ImageUrl;
+                Session.Add("error", ex);
 
             }
         }
@@ -77,7 +99,7 @@ namespace Gestor_Comercio
                 nuevo.Codigo = txtCodigo.Text;
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Descripcion = txtDescripcion.Text;
-                nuevo.Precio = int.Parse(txtPrecio.Text);
+                nuevo.Precio = decimal.Parse(txtPrecio.Text);
                 nuevo.ImagenUrl = txtImagenUrl.Text;
 
                 nuevo.Categoria = new Categoria();
@@ -85,9 +107,40 @@ namespace Gestor_Comercio
                 nuevo.Marca = new Marca();
                 nuevo.Marca.Id = int.Parse(ddlmarca.SelectedValue);
 
-                negocio.Agregar(nuevo);
+                if (Request.QueryString["Id"] != null)
+                {
+                    nuevo.Id = int.Parse(Request.QueryString["Id"].ToString());
+                    negocio.Modificar(nuevo);
+                }
+                else
+                    negocio.Agregar(nuevo);
 
                 Response.Redirect("ListaArticulos.aspx", false);
+            }
+            catch (Exception ex)
+            {
+
+                Session.Add("error", ex);
+            }
+        }
+
+        protected void btnEliminar_Click(object sender, EventArgs e)
+        {
+            ConfirmaEliminacion = true;
+        }
+
+        protected void btnConfirmaEliminar_Click(object sender, EventArgs e)
+        {
+            
+
+            try
+            {
+                if (chkConfirmaEliminar.Checked)
+                {
+                    ArticuloBusiness negocio = new ArticuloBusiness();               
+                    negocio.EliminarFisico(int.Parse(txtId.Text));
+                    Response.Redirect("ListaArticulos.aspx");
+                }
             }
             catch (Exception ex)
             {

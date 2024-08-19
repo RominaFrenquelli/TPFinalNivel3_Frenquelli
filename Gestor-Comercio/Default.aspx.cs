@@ -35,6 +35,8 @@ namespace Gestor_Comercio
                     ddlMenu.DataTextField = "Descripcion";
                     ddlMenu.DataValueField = "Id";
                     ddlMenu.DataBind();
+                    ddlMenu.Items.Insert(0, new ListItem("-Seleccione una opción-", ""));
+
 
                     repRepetidor.DataSource = Session["articuloLista"];
                     repRepetidor.DataBind();
@@ -46,26 +48,6 @@ namespace Gestor_Comercio
 
                 Session.Add("error", ex);
             }
-        }
-
-        public string CargarImagen(string imagenUrl)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(imagenUrl) && (imagenUrl.ToUpper().Contains("HTTPS") /*|| File.Exists(Server.MapPath(imagenUrl))*/))
-                {
-                    return imagenUrl;
-                }
-                else
-                {
-                    return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
-                }
-            }
-            catch
-            {
-                return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
-            }
-
         }
 
         protected void txtFiltrar_TextChanged(object sender, EventArgs e)

@@ -9,14 +9,23 @@ namespace Business
 {
     public class ArticuloBusiness
     {
-        public List<Articulo> Listar()
+        public List<Articulo> Listar(string id = "")
         {
             List<Articulo> listado = new List<Articulo>();
             ConectarDB datos = new ConectarDB();
 
             try
             {
-                datos.SetearConsulta("select A.Id, Codigo, Nombre, A.Descripcion, A.IdMarca, A.IdCategoria, C.Descripcion Categoria, M.Descripcion Marca, ImagenUrl, Precio from ARTICULOS A, CATEGORIAS C, MARCAS M where C.Id = A.IdCategoria AND M.Id = A.IdMarca");
+                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion, A.IdMarca, A.IdCategoria, C.Descripcion Categoria, M.Descripcion Marca, ImagenUrl, Precio from ARTICULOS A, CATEGORIAS C, MARCAS M where C.Id = A.IdCategoria AND M.Id = A.IdMarca" ;
+
+                if (id != "")
+                {
+                    consulta += " and A.Id = @id";
+                    datos.SetearParametro("@id", id);
+
+                }
+
+                datos.SetearConsulta(consulta);
                 datos.EjecutarLectura();
 
                 while (datos.Lector.Read())
@@ -144,21 +153,7 @@ namespace Business
                                 consulta += "Nombre LIKE '%" + filtro + "%'";
                                 break;
                         }
-                        break;
-                    case "Descripcion":
-                        switch (criterio)
-                        {
-                            case "Comienza con":
-                                consulta += "A.Descripcion LIKE '" + filtro + "%'";
-                                break;
-                            case "Termina con":
-                                consulta += "A.Descripcion LIKE '%" + filtro + "'";
-                                break;
-                            default:
-                                consulta += "A.Descripcion LIKE '%" + filtro + "%'";
-                                break;
-                        }
-                        break;
+                        break;              
                     default:
                         switch (criterio)
                         {

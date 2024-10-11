@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Dominio;
 using Business;
+using System.IO;
 
 namespace Gestor_Comercio
 {
@@ -14,6 +15,12 @@ namespace Gestor_Comercio
         public bool ConfirmaEliminacion { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!Seguridad.EsAdmin(Session["usuario"]))
+            {
+                Session.Add("error", "Se requiere rol de administrador para ingresar a esta página");
+                Response.Redirect("Error.aspx", false);
+            }
+
             txtId.Enabled = false;
             ConfirmaEliminacion = false;
 
@@ -55,8 +62,9 @@ namespace Gestor_Comercio
             }
             catch (Exception ex)
             {
-                Session.Add("error", ex);
-                
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
+
             }
         }
 
@@ -65,11 +73,13 @@ namespace Gestor_Comercio
             CargarImagen(txtImagenUrl.Text);
         }
 
+        
+
         private void CargarImagen(string imagen)
         {
             try
             {
-                if (imagen.ToUpper().Contains("HTTPS") /*|| File.Exists(imagen)*/)
+                if (imagen.ToUpper().Contains("HTTPS") || File.Exists(Server.MapPath(imagen)))
                 {
 
                     imgArticulo.ImageUrl = txtImagenUrl.Text;
@@ -84,7 +94,8 @@ namespace Gestor_Comercio
             }
             catch (Exception ex)
             {
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
 
             }
         }
@@ -100,7 +111,19 @@ namespace Gestor_Comercio
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Descripcion = txtDescripcion.Text;
                 nuevo.Precio = decimal.Parse(txtPrecio.Text);
-                nuevo.ImagenUrl = txtImagenUrl.Text;
+                //nuevo.ImagenUrl = txtImagenUrl.Text;
+                if (fuImagen.HasFile)
+                {
+                    
+                    string ruta = Server.MapPath("~/Images/FotoArticulo/");
+                    fuImagen.SaveAs(ruta + fuImagen.FileName);
+                    nuevo.ImagenUrl = "~/Images/FotoArticulo/" + fuImagen.FileName;
+                }
+                else
+                {
+                    
+                    nuevo.ImagenUrl = txtImagenUrl.Text;
+                }
 
                 nuevo.Categoria = new Categoria();
                 nuevo.Categoria.Id = int.Parse(ddlCategoria.SelectedValue);
@@ -120,7 +143,8 @@ namespace Gestor_Comercio
             catch (Exception ex)
             {
 
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
             }
         }
 
@@ -145,7 +169,8 @@ namespace Gestor_Comercio
             catch (Exception ex)
             {
 
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
             }
         }
     }

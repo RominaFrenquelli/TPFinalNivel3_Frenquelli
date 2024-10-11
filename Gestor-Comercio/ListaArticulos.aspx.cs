@@ -16,16 +16,27 @@ namespace Gestor_Comercio
         {
             try
             {
-                ArticuloBusiness negocio = new ArticuloBusiness();
-                Session.Add("ListaArticulo", negocio.Listar());
+                if (!Seguridad.EsAdmin(Session["usuario"]))
+                {
+                    Session.Add("error", "Se requiere rol de administrador para ingresar a esta página");
+                    Response.Redirect("Error.aspx", false);
+                }
                 
-                dgvArticulos.DataSource = Session["ListaArticulo"];
-                dgvArticulos.DataBind();
+                if (!IsPostBack)
+                {
+                    ArticuloBusiness negocio = new ArticuloBusiness();
+                    Session.Add("ListaArticulo", negocio.Listar());
+                
+                    dgvArticulos.DataSource = Session["ListaArticulo"];
+                    dgvArticulos.DataBind();
+
+                }
             }
             catch (Exception ex)
             {
 
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
             }
 
         }
@@ -83,19 +94,55 @@ namespace Gestor_Comercio
 
         protected void txtFiltroAvanzado_TextChanged(object sender, EventArgs e)
         {
-            ArticuloBusiness negocio = new ArticuloBusiness();
             try
             {
-                dgvArticulos.DataSource = negocio.Filtrar(ddlCampo.SelectedItem.ToString(), 
-                                                          ddlCriterio.SelectedItem.ToString(), 
-                                                          txtFiltroAvanzado.Text);
+                ArticuloBusiness negocio = new ArticuloBusiness();
+                Session.Add("ListaFiltrada", negocio.Filtrar(ddlCampo.SelectedItem.ToString(),
+                                                          ddlCriterio.SelectedItem.ToString(),
+                                                          txtFiltroAvanzado.Text));
+
+                dgvArticulos.DataSource = Session["ListaFiltrada"];
                 dgvArticulos.DataBind();
             }
             catch (Exception ex)
             {
 
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
             }
+        }
+
+        protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
+        {
+            ArticuloBusiness negocio = new ArticuloBusiness();
+            try
+            {
+                txtBuscar.Text = "";
+                ddlCriterio.Items.Clear();
+                txtFiltroAvanzado.Text = "";
+
+                dgvArticulos.DataSource = negocio.Listar();
+                dgvArticulos.DataBind();
+
+            }
+            catch (Exception ex)
+            {
+
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
+            }
+
+
+        }
+
+        protected void dgvArticulos_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            if (Session["ListaFiltrada"] != null)
+                dgvArticulos.DataSource = Session["ListaFiltrada"];
+            else
+                dgvArticulos.DataSource = Session["ListaArticulo"];
+            dgvArticulos.PageIndex = e.NewPageIndex;
+            dgvArticulos.DataBind();
         }
     }
 

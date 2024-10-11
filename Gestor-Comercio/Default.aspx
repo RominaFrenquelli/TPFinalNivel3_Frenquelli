@@ -3,7 +3,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <nav class="navbar navbar-expand-lg" data-bs-theme="dark" style="background-color: #00a59d; border-color: #148a85;">
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+    <nav class="navbar navbar-expand-lg" style="background-color: #549be1; border-color: #148a85;">
         <div class="container-fluid">
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,18 +20,22 @@
                         <asp:DropDownList runat="server" ID="ddlMenu" CssClass="dropdown-menu" AutoPostBack="true" OnSelectedIndexChanged="ddlMenu_SelectedIndexChanged">
                         </asp:DropDownList>
                     </li>
+
                     <li class="nav-item">
+                        <%if (Business.Seguridad.EsAdmin(Session["usuario"]))
+                            { %>
                         <a class="nav-link active" href="ListaArticulos.aspx">Lista de Articulos</a>
+                        <%} %>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="Favoritos.aspx">Favoritos</a>
+                        <a class="nav-link active" href="Favoritos.aspx">Marcas</a>
                     </li>
                 </ul>
             </div>
             <div class="d-flex">
                 <span class="input-group-text">Buscar</span>
                 <asp:TextBox runat="server" ID="txtFiltrar" CssClass="form-control" aria-describedby="btnBuscar" AutoPostBack="true" OnTextChanged="txtFiltrar_TextChanged" />
-                <button class="btn btn-outline-secondary" type="button" id="btnBuscar">
+                <button class="btn btn-secondary" type="button" id="btnBuscar">
                     <img src="images/lupa.png" alt="Buscar" /></button>
             </div>
 
@@ -43,11 +48,18 @@
                 <ItemTemplate>
                     <div class="col">
                         <div class="card h-100">
-                            <img src="<%# (Eval("ImagenUrl").ToString()) %>" class="card-img-top img-ajustada" alt="Imagen del Producto">
+                            <img src="<%# CargarImagen(Eval("ImagenUrl").ToString()) %>" class="card-img-top img-ajustada" alt="Imagen del Producto">
                             <div class="card-body">
                                 <h5 class="card-title"><%#Eval("Nombre") %></h5>
                                 <p class="card-text"><%#Eval("Marca")%></p>
                                 <a href="DetalleArticulo.aspx?Id=<%#Eval("Id") %>">Ver Detalle</a>
+                                <div class="d-flex justify-content-end">
+                                    <asp:UpdatePanel runat="server">
+                                        <ContentTemplate>
+                                            <asp:Button ID="btnFavorito" runat="server" CssClass='<%# EsFavorito(Eval("Id").ToString()) ? "btn btn-favorito favorito" : "btn btn-favorito no-favorito" %>' CommandArgument='<%# Eval("Id") %>' OnClick="btnFavorito_Click" Text="❤" AutoPostBack="true"/>                                    
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
+                                </div>
                             </div>
                             <div class="card-footer">
                                 <small class="text-body-secondary">Precio: $ <%#Eval("Precio") %></small>

@@ -24,9 +24,12 @@
                                         <img src="images/lupa.png" alt="Buscar" /></button>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6 d-flex align-items-center">
                                 <div class="mb-3">
-                                    <asp:CheckBox Text="Filtro Avanzado" ID="chkFiltroAvanzado" runat="server" AutoPostBack="true" CssClass="form-check" OnCheckedChanged="chkFiltroAvanzado_CheckedChanged" />
+                                    <asp:CheckBox Text="Filtro Avanzado" ID="chkFiltroAvanzado" runat="server" AutoPostBack="true" CssClass="form-check me-4" OnCheckedChanged="chkFiltroAvanzado_CheckedChanged" />
+                                </div>
+                                <div class="mb-3">
+                                    <asp:Button Text="Limpiar Filtro" runat="server" ID="btnLimpiarFiltro" CssClass="btn btn-secondary" OnClick="btnLimpiarFiltro_Click" />
                                 </div>
                             </div>
                         </div>
@@ -62,7 +65,7 @@
 
 
                         <%} %>
-                        <asp:GridView ID="dgvArticulos" runat="server" DataKeyNames="id" CssClass="table" AutoGenerateColumns="false" OnSelectedIndexChanged="dgvArticulos_SelectedIndexChanged">
+                        <asp:GridView ID="dgvArticulos" runat="server" DataKeyNames="id" CssClass="table" AutoGenerateColumns="false" OnSelectedIndexChanged="dgvArticulos_SelectedIndexChanged" OnPageIndexChanging="dgvArticulos_PageIndexChanging" AllowPaging="true" PageSize="5">
                             <Columns>
                                 <asp:BoundField HeaderText="Codigo" DataField="Codigo" />
                                 <asp:BoundField HeaderText="Nombre" DataField="Nombre" />

@@ -62,6 +62,7 @@ namespace Business
                 datos.CerrarConexion();
             }
         }
+       
 
         public void Agregar(Articulo nuevo)
         {

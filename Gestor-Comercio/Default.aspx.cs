@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using Dominio;
 using Business;
 using System.Net;
+using System.IO;
 
 namespace Gestor_Comercio
 {
@@ -46,9 +47,47 @@ namespace Gestor_Comercio
             catch (Exception ex)
             {
 
-                Session.Add("error", ex);
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
             }
         }
+
+        protected bool EsFavorito(string id)
+        {
+            return true;
+        }
+
+        protected string CargarImagen(string imagen)
+        {
+            try
+            {
+
+                if (!string.IsNullOrEmpty(imagen) && imagen.ToUpper().StartsWith("HTTP"))
+                {
+                    return imagen; 
+                }
+                
+                else if (!string.IsNullOrEmpty(imagen))
+                {
+                    string rutaServidor = Server.MapPath(imagen);
+
+                    if (File.Exists(rutaServidor))
+                    {
+                        
+                        string rutaRelativa = imagen.Replace("~", "");
+                        return rutaRelativa; 
+                    }
+                }
+                    return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png"; 
+
+            }
+            catch (Exception)
+            {
+                return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png"; 
+            }
+        }
+
+
 
         protected void txtFiltrar_TextChanged(object sender, EventArgs e)
         {
@@ -83,5 +122,47 @@ namespace Gestor_Comercio
 
         }
 
+        protected void btnFavorito_Click(object sender, EventArgs e)
+        {
+            FavoritoBusiness negocio = new FavoritoBusiness();
+            
+            try
+            {
+                string articuloId = ((Button)sender).CommandArgument;
+                int userId = 0;
+
+                if (Seguridad.SesionActiva(Session["usuario"]))
+                {
+                    Usuario usuario = (Usuario)Session["usuario"];
+                    userId = usuario.Id;
+                }
+
+                bool esFavorito = negocio.EsFavorito(articuloId, userId);
+
+                if (esFavorito)
+                {
+                    // Si ya está en favoritos, quitar de favoritos
+                    negocio.QuitarFav(userId, int.Parse(articuloId));
+                }
+                else
+                {
+                    // Si no está en favoritos, agregar a favoritos
+                    negocio.AgregarFav(userId, int.Parse(articuloId));
+                }
+                
+            }
+            catch (Exception ex)
+            {
+
+                Session.Add("error", ex.ToString());
+                Response.Redirect("Error.aspx");
+            }
+
+            
+        }
+
+        
+
+        
     }
 }

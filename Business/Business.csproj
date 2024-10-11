@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,8 +45,14 @@
     <Compile Include="ArticuloBusiness.cs" />
     <Compile Include="CategoriaBusiness.cs" />
     <Compile Include="ConectarDB.cs" />
+    <Compile Include="DefaultBusiness.cs" />
+    <Compile Include="EmailService.cs" />
+    <Compile Include="FavoritoBusiness.cs" />
     <Compile Include="MarcaBusiness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Seguridad.cs" />
+    <Compile Include="UsuarioBusiness.cs" />
+    <Compile Include="Validaciones.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dominio\Dominio.csproj">

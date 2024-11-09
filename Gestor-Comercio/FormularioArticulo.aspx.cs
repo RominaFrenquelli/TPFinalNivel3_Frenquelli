@@ -107,10 +107,23 @@ namespace Gestor_Comercio
 
             try
             {
+                Page.Validate();
+                if (!Page.IsValid)
+                    return;
+
                 nuevo.Codigo = txtCodigo.Text;
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Descripcion = txtDescripcion.Text;
-                nuevo.Precio = decimal.Parse(txtPrecio.Text);
+                if (!string.IsNullOrEmpty(txtPrecio.Text) && decimal.TryParse(txtPrecio.Text, out decimal precio))
+                {
+                    nuevo.Precio = precio;
+                }
+                else
+                {
+                    Session.Add("error", "El campo Precio está vacío o tiene un formato incorrecto.");
+                    Response.Redirect("Error.aspx", false);
+                    return;
+                }
                 //nuevo.ImagenUrl = txtImagenUrl.Text;
                 if (fuImagen.HasFile)
                 {
@@ -163,7 +176,7 @@ namespace Gestor_Comercio
                 {
                     ArticuloBusiness negocio = new ArticuloBusiness();               
                     negocio.EliminarFisico(int.Parse(txtId.Text));
-                    Response.Redirect("ListaArticulos.aspx");
+                    Response.Redirect("ListaArticulos.aspx", false);
                 }
             }
             catch (Exception ex)

@@ -30,8 +30,16 @@ namespace Gestor_Comercio
                     Response.Redirect("Error.aspx");
                 }
 
-                Usuario user = new Usuario();
                 UsuarioBusiness negocio = new UsuarioBusiness();
+
+                if (negocio.ExisteEmail(txtMail.Text))
+                {
+                    Session.Add("error", "El email ya está registrado. Por favor, utiliza otro email.");
+                    Response.Redirect("Error.aspx");
+                    return;
+                }
+
+                Usuario user = new Usuario();
                 EmailService emailService = new EmailService();
                 user.Email = txtMail.Text;
                 user.Pass = txtPass.Text;

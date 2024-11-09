@@ -8,7 +8,7 @@
         <hr />
         <div class="card">
             <div class="card-header">
-                <asp:Label Text="" ID="lblCategoria" runat="server" CssClass="h2 form-label"/>
+                <asp:Label Text="" ID="lblCategoria" runat="server" CssClass="h2 form-label" />
             </div>
             <div class="card-body">
                 <div class="row">
@@ -38,17 +38,20 @@
                         <div class="mt-auto">
                             <asp:Button Text="Comprar" runat="server" ID="btnComprar" CssClass="btn btn-primary me-2" />
                         </div>
+                        <div class="mb-3 mt-3">
+                            <a href="javascript:history.back()" >Volver</a>
+                        </div>
                     </div>
-                 </div>
-                  <div class="row">
-                      <div class="col-6">
-                          <div class="mb-3">
-                              <label for="lblDescripcion" class="form-label">Descripcion: </label>
-                              <asp:Label ID="lblDescripcion" runat="server" Text="Descripcion: " CssClass="form-label"></asp:Label>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="lblDescripcion" class="form-label">Descripcion: </label>
+                            <asp:Label ID="lblDescripcion" runat="server" Text="Descripcion: " CssClass="form-label"></asp:Label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </asp:Content>

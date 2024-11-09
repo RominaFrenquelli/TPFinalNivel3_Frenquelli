@@ -13,12 +13,16 @@ namespace Gestor_Comercio
 {
     public partial class Default : System.Web.UI.Page
     {
+        
         public List<Articulo> articuloLista { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            
+
             ArticuloBusiness negocio = new ArticuloBusiness();
             CategoriaBusiness negocioCategoria = new CategoriaBusiness();
+            MarcaBusiness negocioMarca = new MarcaBusiness();
 
             try
             {
@@ -36,9 +40,17 @@ namespace Gestor_Comercio
                     ddlMenu.DataTextField = "Descripcion";
                     ddlMenu.DataValueField = "Id";
                     ddlMenu.DataBind();
-                    ddlMenu.Items.Insert(0, new ListItem("-Seleccione una opción-", ""));
+                    ddlMenu.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
 
+                    List<Marca> listaMarcas = negocioMarca.Listar();
 
+                    ddlMarcas.DataSource = listaMarcas;
+                    ddlMarcas.DataTextField = "Descripcion";
+                    ddlMarcas.DataValueField= "Id";
+                    ddlMarcas.DataBind();
+                    ddlMarcas.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
+
+                    repRepetidor.ItemDataBound += new RepeaterItemEventHandler(repRepetidor_ItemDataBound);
                     repRepetidor.DataSource = Session["articuloLista"];
                     repRepetidor.DataBind();
                 }
@@ -52,9 +64,51 @@ namespace Gestor_Comercio
             }
         }
 
-        protected bool EsFavorito(string id)
+        //protected bool EsFavorito(string id)
+        //{
+        //    int userId = 0;
+
+        //    if (Seguridad.SesionActiva(Session["usuario"]))
+        //    {
+        //        Usuario usuario = (Usuario)Session["usuario"];
+        //        userId = usuario.Id;
+        //    }
+
+        //    FavoritoBusiness negocio = new FavoritoBusiness();
+        //    return negocio.EsFavorito(id, userId);
+        //}
+
+        protected void repRepetidor_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            return true;
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                // Obtener el ID del artículo
+                string articuloId = DataBinder.Eval(e.Item.DataItem, "Id").ToString();
+
+                // Obtener el ID del usuario si hay una sesión activa
+                int userId = 0;
+                if (Seguridad.SesionActiva(Session["usuario"]))
+                {
+                    Usuario usuario = (Usuario)Session["usuario"];
+                    userId = usuario.Id;
+                }
+
+                // Verificar si es favorito
+                FavoritoBusiness negocio = new FavoritoBusiness();
+                bool esFavorito = negocio.EsFavorito(articuloId, userId);
+
+                // Buscar el botón en el Repeater
+                Button btnFavorito = (Button)e.Item.FindControl("btnFavorito");
+                
+                if (esFavorito)
+                {
+                    btnFavorito.CssClass = "btn btn-favorito favorito"; // Clase para artículo en favoritos
+                }
+                else
+                {
+                    btnFavorito.CssClass = "btn btn-favorito"; // Clase para artículo no favorito
+                }
+            }
         }
 
         protected string CargarImagen(string imagen)
@@ -110,11 +164,19 @@ namespace Gestor_Comercio
 
         protected void ddlMenu_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            
             int idCategoria = int.Parse(ddlMenu.SelectedItem.Value);
             List<Articulo> filtroCategoria = articuloLista;
 
-            filtroCategoria = ((List<Articulo>)Session["articuloLista"]).FindAll(x => x.Categoria.Id == idCategoria);
+            if(idCategoria != -1)
+            {
+                filtroCategoria = ((List<Articulo>)Session["articuloLista"]).FindAll(x => x.Categoria.Id == idCategoria);
+            }
+            else
+            {
+                filtroCategoria = (List<Articulo>)Session["articuloLista"];
+            }
+            
 
             repRepetidor.DataSource = filtroCategoria;
             repRepetidor.DataBind();
@@ -125,7 +187,7 @@ namespace Gestor_Comercio
         protected void btnFavorito_Click(object sender, EventArgs e)
         {
             FavoritoBusiness negocio = new FavoritoBusiness();
-            
+            string script = "";
             try
             {
                 string articuloId = ((Button)sender).CommandArgument;
@@ -136,33 +198,51 @@ namespace Gestor_Comercio
                     Usuario usuario = (Usuario)Session["usuario"];
                     userId = usuario.Id;
                 }
+                else
+                {
+                    Response.Redirect("Login.aspx", false);                    
+                }
 
                 bool esFavorito = negocio.EsFavorito(articuloId, userId);
 
                 if (esFavorito)
                 {
-                    // Si ya está en favoritos, quitar de favoritos
                     negocio.QuitarFav(userId, int.Parse(articuloId));
+                    script = "document.getElementById('" + ((Button)sender).ClientID + "').classList.remove('favorito');";
                 }
                 else
                 {
-                    // Si no está en favoritos, agregar a favoritos
                     negocio.AgregarFav(userId, int.Parse(articuloId));
+                    script = "document.getElementById('" + ((Button)sender).ClientID + "').classList.add('favorito');";
                 }
-                
+
+                ScriptManager.RegisterStartupScript(this, GetType(), "changeColor", script, true);
             }
             catch (Exception ex)
             {
-
                 Session.Add("error", ex.ToString());
                 Response.Redirect("Error.aspx");
-            }
-
-            
+            }            
         }
 
-        
+        protected void ddlMarcas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int idMarcas = int.Parse(ddlMarcas.SelectedItem.Value);
+            List<Articulo> filtroMarcas = articuloLista;
 
-        
+            if (idMarcas != -1)
+            {
+                filtroMarcas = ((List<Articulo>)Session["articuloLista"]).FindAll(x => x.Marca.Id == idMarcas);
+            }
+            else
+            {
+                filtroMarcas = (List<Articulo>)Session["articuloLista"];
+            }
+
+
+            repRepetidor.DataSource = filtroMarcas;
+            repRepetidor.DataBind();
+
+        }
     }
 }

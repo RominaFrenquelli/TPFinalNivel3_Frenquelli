@@ -4,14 +4,14 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-    <nav class="navbar navbar-expand-lg" style="background-color: #549be1; border-color: #148a85;">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-default">
+        <div class="container-fluid" >
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="Default.aspx">Home</a>
                     </li>
@@ -20,16 +20,17 @@
                         <asp:DropDownList runat="server" ID="ddlMenu" CssClass="dropdown-menu" AutoPostBack="true" OnSelectedIndexChanged="ddlMenu_SelectedIndexChanged">
                         </asp:DropDownList>
                     </li>
-
+                    <li class="nav-item dropdown">
+                        <asp:Label Text="Marcas" runat="server" CssClass="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" />
+                        <asp:DropDownList runat="server" ID="ddlMarcas" CssClass="dropdown-menu" AutoPostBack="true" OnSelectedIndexChanged="ddlMarcas_SelectedIndexChanged">
+                        </asp:DropDownList>
+                    </li>
                     <li class="nav-item">
                         <%if (Business.Seguridad.EsAdmin(Session["usuario"]))
                             { %>
                         <a class="nav-link active" href="ListaArticulos.aspx">Lista de Articulos</a>
                         <%} %>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="Favoritos.aspx">Marcas</a>
-                    </li>
+                    </li>                  
                 </ul>
             </div>
             <div class="d-flex">
@@ -41,10 +42,10 @@
 
         </div>
     </nav>
-    <div class="container">
+    <div class="container container-rep">
         <hr />
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            <asp:Repeater ID="repRepetidor" runat="server">
+            <asp:Repeater ID="repRepetidor" runat="server" OnItemDataBound="repRepetidor_ItemDataBound">
                 <ItemTemplate>
                     <div class="col">
                         <div class="card h-100">
@@ -55,14 +56,14 @@
                                 <a href="DetalleArticulo.aspx?Id=<%#Eval("Id") %>">Ver Detalle</a>
                                 <div class="d-flex justify-content-end">
                                     <asp:UpdatePanel runat="server">
-                                        <ContentTemplate>
-                                            <asp:Button ID="btnFavorito" runat="server" CssClass='<%# EsFavorito(Eval("Id").ToString()) ? "btn btn-favorito favorito" : "btn btn-favorito no-favorito" %>' CommandArgument='<%# Eval("Id") %>' OnClick="btnFavorito_Click" Text="❤" AutoPostBack="true"/>                                    
+                                        <ContentTemplate>                                            
+                                            <asp:Button ID="btnFavorito" runat="server" CssClass="btn btn-favorito" CommandArgument='<%# Eval("Id") %>' OnClick="btnFavorito_Click" AutoPostBack="true"/>                                    
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <small class="text-body-secondary">Precio: $ <%#Eval("Precio") %></small>
+                                <small>Precio: $ <%#Eval("Precio") %></small>
                             </div>
                         </div>
                     </div>

@@ -20,11 +20,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="txtCodigo" class="form-label">Codigo</label>
-                            <asp:TextBox ID="txtCodigo" runat="server" CssClass="form-control" />
+                            <asp:TextBox ID="txtCodigo" ClientIdMode="Static" runat="server" CssClass="form-control" />
                         </div>
                         <div class="mb-3">
                             <label for="txtNombre" class="form-label">Nombre</label>
-                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
+                            <asp:TextBox ID="txtNombre" ClientIdMode="Static" runat="server" CssClass="form-control" />
                         </div>
                         <div class="mb-3">
                             <label for="ddlMarca" class="form-label">Marca</label>
@@ -39,11 +39,12 @@
                     <div class="col-6">
                         <div class="mb-3">
                             <label for="txtDescripcion" class="form-label">Descripcion</label>
-                            <asp:TextBox runat="server" TextMode="MultiLine" ID="txtDescripcion" CssClass="form-control" />
+                            <asp:TextBox runat="server" TextMode="MultiLine" ID="txtDescripcion" ClientIdMode="Static" CssClass="form-control" />
                         </div>
                         <div class="mb-3">
                             <label for="txtPrecio" class="form-label">Precio</label>
-                            <asp:TextBox ID="txtPrecio" runat="server" CssClass="form-control" />
+                            <asp:TextBox ID="txtPrecio" runat="server" ClientIdMode="Static" CssClass="form-control" />
+                            <asp:RegularExpressionValidator ErrorMessage="Debe ingresar un número.decimal" ControlToValidate="txtPrecio" ValidationExpression="^\d+(\.\d{1,4})?$" runat="server" cssClass="validation-error" />
                         </div>
                         <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                             <ContentTemplate>
@@ -62,7 +63,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col d-flex align-items-center">
-                            <asp:Button Text="Aceptar" runat="server" ID="btnAceptar" CssClass="btn btn-primary me-2" OnClick="btnAceptar_Click" />
+                            <asp:Button Text="Aceptar" runat="server" ID="btnAceptar" CssClass="btn btn-primary me-2" OnClientClick="return validar()" OnClick="btnAceptar_Click" />
                             <a href="ListaArticulos.aspx" class="btn btn-link">Cancelar</a>
                         </div>
                         <div class="col d-flex justify-content-end align-items-center">

@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Business;
 using Dominio;
+using System.Net;
 
 
 namespace Gestor_Comercio
@@ -58,6 +59,7 @@ namespace Gestor_Comercio
         protected void btnEliminarFavorito_Click(object sender, EventArgs e)
         {
             FavoritoBusiness negocio = new FavoritoBusiness();
+            string script = "";
             try
             {
                 string articuloId = ((Button)sender).CommandArgument;
@@ -69,6 +71,9 @@ namespace Gestor_Comercio
                     userId = usuario.Id;
                 }
                 negocio.QuitarFav(userId, int.Parse(articuloId));
+                script = "document.getElementById('" + ((Button)sender).ClientID + "').closest('.col').remove();";
+
+                ScriptManager.RegisterStartupScript(this, GetType(), "removeElement", script, true);
             }
             catch (Exception ex)
             {
@@ -77,35 +82,35 @@ namespace Gestor_Comercio
                 Response.Redirect("Error.aspx");
             }
         }
+
+        protected string CargarImagen(string imagen)
+        {
+            try
+            {
+
+                if (!string.IsNullOrEmpty(imagen) && imagen.ToUpper().StartsWith("HTTP"))
+                {
+                    return imagen;
+                }
+
+                else if (!string.IsNullOrEmpty(imagen))
+                {
+                    string rutaServidor = Server.MapPath(imagen);
+
+                    if (File.Exists(rutaServidor))
+                    {
+
+                        string rutaRelativa = imagen.Replace("~", "");
+                        return rutaRelativa;
+                    }
+                }
+                return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
+
+            }
+            catch (Exception)
+            {
+                return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
+            }
+        }
     }
-
-    //protected string CargarImagen(string imagen)
-    //{
-    //    try
-    //    {
-
-    //        if (!string.IsNullOrEmpty(imagen) && imagen.ToUpper().StartsWith("HTTP"))
-    //        {
-    //            return imagen;
-    //        }
-
-    //        else if (!string.IsNullOrEmpty(imagen))
-    //        {
-    //            string rutaServidor = Server.MapPath(imagen);
-
-    //            if (File.Exists(rutaServidor))
-    //            {
-
-    //                string rutaRelativa = imagen.Replace("~", "");
-    //                return rutaRelativa;
-    //            }
-    //        }
-    //        return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
-
-    //    }
-    //    catch (Exception)
-    //    {
-    //        return "https://efectocolibri.com/wp-content/uploads/2021/01/placeholder.png";
-    //    }
-    //}
 }

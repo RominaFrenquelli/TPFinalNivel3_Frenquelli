@@ -3,17 +3,17 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-    <div class="container">
+    <div class="container text-white">
         <hr />
         <h1>Favoritos</h1>
-        <asp:Label Text="text" ID="lblMensaje" runat="server" />
+        <asp:Label Text="" ID="lblMensaje" runat="server" />
 
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <asp:Repeater ID="repRepetidor" runat="server">
                 <ItemTemplate>
                     <div class="col">
                         <div class="card h-100">
-                            <img src="<%# (Eval("ImagenUrl").ToString()) %>" class="card-img-top img-ajustada" alt="Imagen del Producto">
+                            <img src="<%# CargarImagen(Eval("ImagenUrl").ToString()) %>" class="card-img-top img-ajustada" alt="Imagen del Producto">
                             <div class="card-body">
                                 <h5 class="card-title"><%#Eval("Nombre") %></h5>
                                 <p class="card-text"><%#Eval("Marca")%></p>
@@ -21,13 +21,13 @@
                                 <div class="d-flex justify-content-end">
                                     <asp:UpdatePanel runat="server">
                                         <ContentTemplate>
-                                            <asp:Button ID="btnEliminarFavorito" runat="server" CssClass="btn btn-outline-danger" CommandArgument='<%# Eval("Id") %>' OnClick="btnEliminarFavorito_Click" Text="❤" AutoPostBack="true"/>                                    
+                                            <asp:Button ID="btnEliminarFavorito" runat="server" CssClass="btn btn-favorito favorito" CommandArgument='<%# Eval("Id") %>' OnClick="btnEliminarFavorito_Click" AutoPostBack="true"/>                                    
                                         </ContentTemplate>
                                     </asp:UpdatePanel>                                    
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <small class="text-body-secondary">Precio: $ <%#Eval("Precio") %></small>
+                                <small>Precio: $ <%#Eval("Precio") %></small>
                             </div>
                         </div>
                     </div>

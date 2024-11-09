@@ -31,6 +31,30 @@ namespace Business
             }
         }
 
+        public bool ExisteEmail(string email)
+        {
+            ConectarDB datos = new ConectarDB();
+            try
+            {
+                datos.SetearConsulta("select id from USERS where email = @email");
+                datos.SetearParametro("@email", email);
+                datos.EjecutarLectura();
+                
+                    
+                return datos.Lector.Read();
+                
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         public bool Login(Usuario user)
         {
             ConectarDB datos = new ConectarDB();

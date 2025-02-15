@@ -18,41 +18,23 @@ namespace Gestor_Comercio
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
-
-            ArticuloBusiness negocio = new ArticuloBusiness();
-            CategoriaBusiness negocioCategoria = new CategoriaBusiness();
-            MarcaBusiness negocioMarca = new MarcaBusiness();
 
             try
             {
                 if (!IsPostBack)
                 {
-                    articuloLista = negocio.Listar();
-                    Session["articuloLista"] = articuloLista;
+                    // Obtener lista de favoritos del usuario si hay sesión activa
+                    if (Seguridad.SesionActiva(Session["usuario"]))
+                    {
+                        Usuario usuario = (Usuario)Session["usuario"];
+                        List<int> favoritos = ObtenerFavoritosPorUsuario(usuario.Id);
 
-                    //Session.Add("articuloLista", negocio.Listar());
+                        // Guardar en ViewState para evitar múltiples consultas
+                        ViewState["favoritos"] = favoritos;
+                    }
 
-
-                    List<Categoria> listaCategorias = negocioCategoria.Listar();
-
-                    ddlMenu.DataSource = listaCategorias;
-                    ddlMenu.DataTextField = "Descripcion";
-                    ddlMenu.DataValueField = "Id";
-                    ddlMenu.DataBind();
-                    ddlMenu.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
-
-                    List<Marca> listaMarcas = negocioMarca.Listar();
-
-                    ddlMarcas.DataSource = listaMarcas;
-                    ddlMarcas.DataTextField = "Descripcion";
-                    ddlMarcas.DataValueField= "Id";
-                    ddlMarcas.DataBind();
-                    ddlMarcas.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
-
-                    repRepetidor.ItemDataBound += new RepeaterItemEventHandler(repRepetidor_ItemDataBound);
-                    repRepetidor.DataSource = Session["articuloLista"];
-                    repRepetidor.DataBind();
+                    // Cargar datos y favoritos solo una vez
+                    CargarDatos();
                 }
 
             }
@@ -62,6 +44,41 @@ namespace Gestor_Comercio
                 Session.Add("error", ex.ToString());
                 Response.Redirect("Error.aspx");
             }
+        }
+
+        private void CargarDatos()
+        {
+            ArticuloBusiness negocio = new ArticuloBusiness();
+            CategoriaBusiness negocioCategoria = new CategoriaBusiness();
+            MarcaBusiness negocioMarca = new MarcaBusiness();
+
+            articuloLista = negocio.Listar();
+            Session["articuloLista"] = articuloLista;
+
+            //Session.Add("articuloLista", negocio.Listar());
+
+
+            List<Categoria> listaCategorias = negocioCategoria.Listar();
+
+            ddlMenu.DataSource = listaCategorias;
+            ddlMenu.DataTextField = "Descripcion";
+            ddlMenu.DataValueField = "Id";
+            ddlMenu.DataBind();
+            ddlMenu.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
+
+            List<Marca> listaMarcas = negocioMarca.Listar();
+
+            ddlMarcas.DataSource = listaMarcas;
+            ddlMarcas.DataTextField = "Descripcion";
+            ddlMarcas.DataValueField = "Id";
+            ddlMarcas.DataBind();
+            ddlMarcas.Items.Insert(0, new ListItem("-Seleccione una opción-", "-1"));
+
+            repRepetidor.ItemDataBound += new RepeaterItemEventHandler(repRepetidor_ItemDataBound);
+            repRepetidor.DataSource = Session["articuloLista"];
+            repRepetidor.DataBind();
+
+            
         }
 
         //protected bool EsFavorito(string id)
@@ -85,28 +102,20 @@ namespace Gestor_Comercio
                 // Obtener el ID del artículo
                 string articuloId = DataBinder.Eval(e.Item.DataItem, "Id").ToString();
 
-                // Obtener el ID del usuario si hay una sesión activa
-                int userId = 0;
-                if (Seguridad.SesionActiva(Session["usuario"]))
-                {
-                    Usuario usuario = (Usuario)Session["usuario"];
-                    userId = usuario.Id;
-                }
-
-                // Verificar si es favorito
-                FavoritoBusiness negocio = new FavoritoBusiness();
-                bool esFavorito = negocio.EsFavorito(articuloId, userId);
-
                 // Buscar el botón en el Repeater
                 Button btnFavorito = (Button)e.Item.FindControl("btnFavorito");
-                
-                if (esFavorito)
+
+                // Obtener favoritos del ViewState
+                List<int> favoritos = ViewState["favoritos"] as List<int> ?? new List<int>();
+
+                // Cambiar la clase CSS según si es favorito o no
+                if (favoritos.Contains(int.Parse(articuloId)))
                 {
-                    btnFavorito.CssClass = "btn btn-favorito favorito"; // Clase para artículo en favoritos
+                    btnFavorito.CssClass = "btn btn-favorito favorito";
                 }
                 else
                 {
-                    btnFavorito.CssClass = "btn btn-favorito"; // Clase para artículo no favorito
+                    btnFavorito.CssClass = "btn btn-noFavorito";
                 }
             }
         }
@@ -186,43 +195,58 @@ namespace Gestor_Comercio
 
         protected void btnFavorito_Click(object sender, EventArgs e)
         {
-            FavoritoBusiness negocio = new FavoritoBusiness();
-            string script = "";
+            
+            
             try
             {
-                string articuloId = ((Button)sender).CommandArgument;
+                // Obtener el botón y el contenedor
+                Button btnFavorito = (Button)sender;
+                string articuloId = (btnFavorito.CommandArgument);
                 int userId = 0;
 
+                // Obtener el usuario actual
                 if (Seguridad.SesionActiva(Session["usuario"]))
                 {
                     Usuario usuario = (Usuario)Session["usuario"];
                     userId = usuario.Id;
+
+                    // Alternar estado de favorito
+                    FavoritoBusiness negocio = new FavoritoBusiness();
+                    bool esFavorito = negocio.EsFavorito(articuloId, userId);
+
+                    if (esFavorito)
+                    {
+                        
+                        negocio.QuitarFav(userId, int.Parse(articuloId));
+                    }
+                    else
+                    {
+                        negocio.AgregarFav(userId, int.Parse(articuloId));
+                    }
+
+                    // Actualizar favoritos en ViewState
+                    List<int> favoritos = ObtenerFavoritosPorUsuario(usuario.Id);
+                    ViewState["favoritos"] = favoritos;
+
+                    // Actualizar el Repeater
+                    CargarDatos();
                 }
                 else
                 {
-                    Response.Redirect("Login.aspx", false);                    
+                    Response.Redirect("Login.aspx", false);
                 }
-
-                bool esFavorito = negocio.EsFavorito(articuloId, userId);
-
-                if (esFavorito)
-                {
-                    negocio.QuitarFav(userId, int.Parse(articuloId));
-                    script = "document.getElementById('" + ((Button)sender).ClientID + "').classList.remove('favorito');";
-                }
-                else
-                {
-                    negocio.AgregarFav(userId, int.Parse(articuloId));
-                    script = "document.getElementById('" + ((Button)sender).ClientID + "').classList.add('favorito');";
-                }
-
-                ScriptManager.RegisterStartupScript(this, GetType(), "changeColor", script, true);
             }
             catch (Exception ex)
             {
                 Session.Add("error", ex.ToString());
                 Response.Redirect("Error.aspx");
             }            
+        }
+
+        private List<int> ObtenerFavoritosPorUsuario(int userId)
+        {
+            FavoritoBusiness negocio = new FavoritoBusiness();
+            return negocio.ObtenerFavoritos(userId);
         }
 
         protected void ddlMarcas_SelectedIndexChanged(object sender, EventArgs e)

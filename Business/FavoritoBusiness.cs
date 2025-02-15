@@ -78,6 +78,15 @@ namespace Business
             }
         }
 
+        public List<int> ObtenerFavoritos(int userId)
+        {
+            // Obtén la lista de artículos favoritos usando ListarFav
+            List<Articulo> articulosFavoritos = ListarFav(userId);
+
+            // Extrae solo los IDs de los artículos
+            return articulosFavoritos.Select(a => a.Id).ToList();
+        }
+
         public void QuitarFav(int userId, int artId)
         {
             ConectarDB datos = new ConectarDB();
@@ -121,6 +130,8 @@ namespace Business
                 datos.CerrarConexion();
             }
         }
+
+        
 
     }
 }

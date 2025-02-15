@@ -3,7 +3,6 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-
 }
 
 .div-contentPlaceHolder {
@@ -21,10 +20,23 @@
     box-shadow: 5px 2px 0 rgb(0 0 0 / 30%);
 }
 
-.navbar-default .navbar-nav .nav-link {
-    color: #0f2e66;
-    font-weight: 500;
+    .navbar-default .navbar-nav .nav-link {
+        color: #0f2e66;
+        font-weight: 500;
+    }
+
+/*.dropdown-menu {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-10px);
 }
+
+.show > .dropdown-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}*/
 
 .btn-primary {
     color: #fff;
@@ -83,12 +95,12 @@ div.card.h-100 {
     font-weight: 600;
 }
 
-/*.card-header {
+.card-header {
     background-color: #0f2e66;
     color: white;
-}*/
+}
 
-.btn-favorito {
+.btn-noFavorito {
     font-size: 24px;
     background: url(https://st4.depositphotos.com/20838724/24118/v/450/depositphotos_241180048-stock-illustration-heart-line-simple-icon-outline.jpg);
     color: gray;
@@ -98,13 +110,13 @@ div.card.h-100 {
     transition: color 0.3s ease;
 }
 
-    .btn-favorito.favorito {
-        background: url(https://attic.sh/kopynigtgj6t0b7rit1zdgbfin85);
-        color: #0f2e66;
-        width: 50px;
-        height: 50px;
-        background-size: 50px;
-    }
+.btn-favorito.favorito {
+    background: url(https://attic.sh/kopynigtgj6t0b7rit1zdgbfin85);
+    color: #0f2e66;
+    width: 50px;
+    height: 50px;
+    background-size: 50px;
+}
 
 .btn-outline-blue {
     color: #0f2e66;
@@ -120,5 +132,3 @@ footer {
     margin-top: auto;
     padding: 1em 0;
 }
-
-

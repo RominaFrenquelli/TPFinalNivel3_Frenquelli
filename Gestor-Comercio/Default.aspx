@@ -57,7 +57,7 @@
                                 <div class="d-flex justify-content-end">
                                     <asp:UpdatePanel runat="server">
                                         <ContentTemplate>                                            
-                                            <asp:Button ID="btnFavorito" runat="server" CssClass="btn btn-favorito" CommandArgument='<%# Eval("Id") %>' OnClick="btnFavorito_Click" AutoPostBack="true"/>                                    
+                                            <asp:Button ID="btnFavorito" runat="server" CssClass="btn btn-noFavorito" CommandArgument='<%# Eval("Id") %>' OnClick="btnFavorito_Click" AutoPostBack="true"/>                                    
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
